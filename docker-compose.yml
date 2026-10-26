@@ -1,0 +1,13 @@
+version: '3.8'
+
+services:
+  rag-app:
+    build: .
+    container_name: rag-eval-engine-app
+    ports:
+      - "8001:8001"
+      - "8502:8502"
+    environment:
+      - GEMINI_API_KEY=${GEMINI_API_KEY:-}
+    volumes:
+      - ./data:/app/data

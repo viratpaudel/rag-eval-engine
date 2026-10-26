@@ -1,0 +1,37 @@
+[
+  {
+    "id": "q1",
+    "query": "How does PagedAttention eliminate memory fragmentation in KV cache?",
+    "query_type": "conceptual",
+    "ground_truth_doc_id": "llm_inference_optimization.md",
+    "expected_answer": "PagedAttention divides the KV cache into fixed-size virtual blocks managed via page tables, achieving near-zero memory waste similar to OS virtual paging."
+  },
+  {
+    "id": "q2",
+    "query": "What is the formula and constant k used in Reciprocal Rank Fusion?",
+    "query_type": "keyword_specific",
+    "ground_truth_doc_id": "hybrid_search_and_rrf.md",
+    "expected_answer": "RRF sums 1 / (k + rank) across rankers, with constant k typically set to 60 to prevent outlier ranks from dominating."
+  },
+  {
+    "id": "q3",
+    "query": "Why do Cross-Encoders achieve higher precision than Bi-Encoders?",
+    "query_type": "comparative",
+    "ground_truth_doc_id": "cross_encoder_rerankers.md",
+    "expected_answer": "Cross-Encoders feed query and document concatenated through full self-attention layers, capturing token-to-token cross-attention rather than independent embedding dot products."
+  },
+  {
+    "id": "q4",
+    "query": "What are the trade-offs between HNSW and IVF-PQ in vector search?",
+    "query_type": "system_design",
+    "ground_truth_doc_id": "vector_databases_and_ann.md",
+    "expected_answer": "HNSW offers superior query recall and lower latency using multi-layer graphs, whereas IVF-PQ achieves an 80-95% smaller memory footprint through k-means clustering and product quantization."
+  },
+  {
+    "id": "q5",
+    "query": "How does speculative decoding achieve inference speedups?",
+    "query_type": "inference_optimization",
+    "ground_truth_doc_id": "llm_inference_optimization.md",
+    "expected_answer": "A small draft model generates candidate tokens in parallel, which are verified in a single forward pass by the larger target model, yielding 2-3x speedups."
+  }
+]
