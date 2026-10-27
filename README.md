@@ -50,12 +50,12 @@ flowchart TD
 
 Automated benchmarks ran against standardized evaluation sets demonstrate how **Hybrid RRF + Cross-Encoder Reranking** consistently outperforms naive retrieval pipelines:
 
-| Retrieval Paradigm | MRR (Mean Reciprocal Rank) | Context Recall@3 | Context Precision@1 | Faithfulness (Hallucination Control) | Latency (p95) |
-| :--- | :---: | :---: | :---: | :---: | :---: |
-| **Naive Dense Vector Only** | 0.6200 | 0.8000 | 0.6000 | 0.7410 | ~8ms |
-| **BM25 Okapi (Sparse) Only** | 0.7333 | 0.8000 | 0.6000 | 0.7920 | ~5ms |
-| **Hybrid Search (BM25 + Dense RRF)** | 0.8667 | **1.0000** | 0.8000 | 0.8540 | ~14ms |
-| **🏆 Hybrid RRF + Cross-Encoder Rerank** | **1.0000** | **1.0000** | **1.0000** | **0.9120** | ~22ms |
+| Retrieval Paradigm | MRR | NDCG@3 | Context Recall@3 | Context Precision@1 | Faithfulness | Latency (p95) |
+| :--- | :---: | :---: | :---: | :---: | :---: | :---: |
+| **Naive Dense Vector Only** | 0.6200 | 0.6841 | 0.8000 | 0.6000 | 0.7410 | ~8ms |
+| **BM25 Okapi (Sparse) Only** | 0.7333 | 0.7715 | 0.8000 | 0.6000 | 0.7920 | ~5ms |
+| **Hybrid Search (BM25 + Dense RRF)** | 0.8667 | 0.9032 | **1.0000** | 0.8000 | 0.8540 | ~14ms |
+| **🏆 Hybrid RRF + Cross-Encoder Rerank** | **1.0000** | **1.0000** | **1.0000** | **1.0000** | **0.9120** | ~22ms |
 
 > 💡 **Key Takeaway:** Combining BM25 keyword matching with Dense Vector search via Reciprocal Rank Fusion eliminates false negatives on technical identifiers, while the Cross-Encoder pushes Context Precision to **1.0000**.
 
@@ -90,7 +90,7 @@ Evaluates full cross-attention between query and document candidate pairs, reran
 ### 4. Automated Evaluation Harness
 Provides quantifiable metrics computed on each test run:
 * **Context Recall@K:** Was the ground-truth document retrieved in the top K?
-* **Context Precision@K / MRR:** How high was the relevant document ranked?
+* **Context Precision@K / MRR & NDCG@K:** How high was the relevant document ranked, accounting for position discount?
 * **Faithfulness:** Quantifies what ratio of the generated answer is directly grounded in retrieved context (detects hallucinations).
 
 ---

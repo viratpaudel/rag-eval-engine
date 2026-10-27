@@ -11,6 +11,8 @@ from src.eval.metrics import (
     calculate_context_precision,
     calculate_context_recall,
     calculate_mrr,
+    calculate_hit_rate,
+    calculate_ndcg,
     calculate_faithfulness,
     calculate_answer_relevancy,
 )
@@ -60,7 +62,7 @@ class RAGBenchmarker:
         strategies = ["Dense_Only", "BM25_Only", "Hybrid_RRF", "Hybrid_Reranked"]
         records = []
 
-        strategy_metrics = {s: {"mrr": [], "recall": [], "precision": [], "faithfulness": []} for s in strategies}
+        strategy_metrics = {s: {"mrr": [], "recall": [], "precision": [], "ndcg": [], "hit_rate": [], "faithfulness": []} for s in strategies}
 
         for item in eval_items:
             q = item["query"]
@@ -73,6 +75,8 @@ class RAGBenchmarker:
             strategy_metrics["Dense_Only"]["mrr"].append(calculate_mrr(dense_ids, gt))
             strategy_metrics["Dense_Only"]["recall"].append(calculate_context_recall(dense_ids, gt))
             strategy_metrics["Dense_Only"]["precision"].append(calculate_context_precision(dense_ids, gt))
+            strategy_metrics["Dense_Only"]["ndcg"].append(calculate_ndcg(dense_ids, gt, k=top_k))
+            strategy_metrics["Dense_Only"]["hit_rate"].append(calculate_hit_rate(dense_ids, gt, k=top_k))
             strategy_metrics["Dense_Only"]["faithfulness"].append(
                 calculate_faithfulness(expected_ans, [d["content"] for d in dense_res])
             )
@@ -83,6 +87,8 @@ class RAGBenchmarker:
             strategy_metrics["BM25_Only"]["mrr"].append(calculate_mrr(bm25_ids, gt))
             strategy_metrics["BM25_Only"]["recall"].append(calculate_context_recall(bm25_ids, gt))
             strategy_metrics["BM25_Only"]["precision"].append(calculate_context_precision(bm25_ids, gt))
+            strategy_metrics["BM25_Only"]["ndcg"].append(calculate_ndcg(bm25_ids, gt, k=top_k))
+            strategy_metrics["BM25_Only"]["hit_rate"].append(calculate_hit_rate(bm25_ids, gt, k=top_k))
             strategy_metrics["BM25_Only"]["faithfulness"].append(
                 calculate_faithfulness(expected_ans, [d["content"] for d in bm25_res])
             )
@@ -93,6 +99,8 @@ class RAGBenchmarker:
             strategy_metrics["Hybrid_RRF"]["mrr"].append(calculate_mrr(hybrid_ids, gt))
             strategy_metrics["Hybrid_RRF"]["recall"].append(calculate_context_recall(hybrid_ids, gt))
             strategy_metrics["Hybrid_RRF"]["precision"].append(calculate_context_precision(hybrid_ids, gt))
+            strategy_metrics["Hybrid_RRF"]["ndcg"].append(calculate_ndcg(hybrid_ids, gt, k=top_k))
+            strategy_metrics["Hybrid_RRF"]["hit_rate"].append(calculate_hit_rate(hybrid_ids, gt, k=top_k))
             strategy_metrics["Hybrid_RRF"]["faithfulness"].append(
                 calculate_faithfulness(expected_ans, [d["content"] for d in hybrid_res])
             )
@@ -103,6 +111,8 @@ class RAGBenchmarker:
             strategy_metrics["Hybrid_Reranked"]["mrr"].append(calculate_mrr(rerank_ids, gt))
             strategy_metrics["Hybrid_Reranked"]["recall"].append(calculate_context_recall(rerank_ids, gt))
             strategy_metrics["Hybrid_Reranked"]["precision"].append(calculate_context_precision(rerank_ids, gt))
+            strategy_metrics["Hybrid_Reranked"]["ndcg"].append(calculate_ndcg(rerank_ids, gt, k=top_k))
+            strategy_metrics["Hybrid_Reranked"]["hit_rate"].append(calculate_hit_rate(rerank_ids, gt, k=top_k))
             strategy_metrics["Hybrid_Reranked"]["faithfulness"].append(
                 calculate_faithfulness(expected_ans, [d["content"] for d in rerank_res])
             )
@@ -113,6 +123,8 @@ class RAGBenchmarker:
             summary_rows.append({
                 "Strategy": s,
                 "MRR": round(sum(m["mrr"]) / len(m["mrr"]), 4),
+                "NDCG@3": round(sum(m["ndcg"]) / len(m["ndcg"]), 4),
+                "HitRate@3": round(sum(m["hit_rate"]) / len(m["hit_rate"]), 4),
                 "Context Recall@3": round(sum(m["recall"]) / len(m["recall"]), 4),
                 "Context Precision@1": round(sum(m["precision"]) / len(m["precision"]), 4),
                 "Faithfulness": round(sum(m["faithfulness"]) / len(m["faithfulness"]), 4),
