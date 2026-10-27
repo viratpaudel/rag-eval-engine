@@ -1,3 +1,4 @@
+import math
 import re
 from typing import List, Set
 
@@ -7,6 +8,10 @@ def _normalize_tokens(text: str) -> Set[str]:
 def calculate_context_recall(retrieved_doc_ids: List[str], ground_truth_doc_id: str) -> float:
     """Evaluates if the ground-truth document was successfully recalled in top-k."""
     return 1.0 if ground_truth_doc_id in retrieved_doc_ids else 0.0
+
+def calculate_hit_rate(retrieved_doc_ids: List[str], ground_truth_doc_id: str, k: int = 3) -> float:
+    """Calculates Hit Rate@k (1.0 if relevant document is present within top-k candidates, else 0.0)."""
+    return 1.0 if ground_truth_doc_id in retrieved_doc_ids[:k] else 0.0
 
 def calculate_context_precision(retrieved_doc_ids: List[str], ground_truth_doc_id: str) -> float:
     """Evaluates how high the relevant document was ranked."""
@@ -18,6 +23,20 @@ def calculate_context_precision(retrieved_doc_ids: List[str], ground_truth_doc_i
 def calculate_mrr(retrieved_doc_ids: List[str], ground_truth_doc_id: str) -> float:
     """Mean Reciprocal Rank (MRR) for the ground-truth document."""
     return calculate_context_precision(retrieved_doc_ids, ground_truth_doc_id)
+
+def calculate_ndcg(retrieved_doc_ids: List[str], ground_truth_doc_id: str, k: int = 10) -> float:
+    """Calculates Normalized Discounted Cumulative Gain (NDCG@k) for binary relevance.
+
+    DCG = 1 / log2(rank + 1) if ground truth is in top-k at 1-based rank, else 0.
+    IDCG = 1 / log2(1 + 1) = 1.0 (since only one ideal relevant document exists).
+    NDCG = DCG / IDCG.
+    """
+    if ground_truth_doc_id not in retrieved_doc_ids[:k]:
+        return 0.0
+    rank = retrieved_doc_ids[:k].index(ground_truth_doc_id) + 1
+    dcg = 1.0 / math.log2(rank + 1)
+    idcg = 1.0
+    return round(dcg / idcg, 4)
 
 def calculate_faithfulness(generated_answer: str, retrieved_contexts: List[str]) -> float:
     """Measures the proportion of statements in the answer grounded in retrieved context (hallucination detector)."""
