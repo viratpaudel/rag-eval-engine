@@ -6,7 +6,7 @@ class CrossEncoderReranker:
     def __init__(self):
         pass
 
-    def rerank(self, query: str, candidates: List[Dict[str, any]], top_k: int = 3) -> List[Dict[str, any]]:
+    def rerank(self, query: str, candidates: List[Dict[str, any]], top_k: int = 3, min_score: float = 0.0) -> List[Dict[str, any]]:
         query_words = set(re.findall(r"\w+", query.lower()))
         reranked = []
 
@@ -34,6 +34,8 @@ class CrossEncoderReranker:
 
         # Sort descending by cross encoder score
         reranked.sort(key=lambda x: x["cross_encoder_score"], reverse=True)
+        if min_score > 0.0:
+            reranked = [item for item in reranked if item["cross_encoder_score"] >= min_score]
 
         for rank, item in enumerate(reranked[:top_k], start=1):
             item["rank"] = rank
