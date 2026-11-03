@@ -25,6 +25,10 @@ def cosine_similarity(v1: List[float], v2: List[float]) -> float:
     dot = sum(a * b for a, b in zip(v1, v2))
     return max(-1.0, min(1.0, dot))
 
+def euclidean_distance(v1: List[float], v2: List[float]) -> float:
+    """Computes Euclidean distance between two vectors."""
+    return math.sqrt(sum((a - b) ** 2 for a, b in zip(v1, v2)))
+
 class DenseVectorStore:
     """In-memory dense vector store with cosine similarity retrieval."""
     def __init__(self, dimension: int = 64):
