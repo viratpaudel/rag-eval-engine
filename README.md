@@ -195,5 +195,13 @@ streamlit run src/ui/app.py --server.port 8502
 
 ---
 
+## ⚡ Performance Tuning & Exporting Reports
+
+- **Automated Reports**: Save benchmark results to JSON and CSV with `benchmarker.save_report_json(path)` and `benchmarker.save_report_csv(path)`.
+- **RRF Smoothing Parameter**: Default is `k=60`. Decreasing `k` places higher weight on top ranks; increasing `k` smooths rank variance.
+- **Bi-Encoder / BM25 Weighting**: Configure `bm25_weight` and `dense_weight` in `HybridRetriever` to adjust sparse vs dense influence.
+
+---
+
 ## 📄 License
 Released under the [MIT License](LICENSE).
