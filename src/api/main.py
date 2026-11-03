@@ -39,6 +39,15 @@ def health_check():
         "supported_strategies": ["dense", "bm25", "hybrid", "hybrid_rerank"],
     }
 
+@app.get("/health/ready")
+def readiness_check():
+    is_ready = len(benchmarker.documents) > 0
+    return {
+        "ready": is_ready,
+        "indexed_documents": len(benchmarker.documents),
+        "status": "ready" if is_ready else "not_ready"
+    }
+
 @app.post("/retrieve")
 def retrieve_documents(req: RetrievalRequest):
     q = req.query.strip()
