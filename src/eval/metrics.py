@@ -24,6 +24,10 @@ def calculate_mrr(retrieved_doc_ids: List[str], ground_truth_doc_id: str) -> flo
     """Mean Reciprocal Rank (MRR) for the ground-truth document."""
     return calculate_context_precision(retrieved_doc_ids, ground_truth_doc_id)
 
+def calculate_reciprocal_rank(retrieved_doc_ids: List[str], ground_truth_doc_id: str) -> float:
+    """Reciprocal Rank (RR) score for a single query."""
+    return calculate_mrr(retrieved_doc_ids, ground_truth_doc_id)
+
 def calculate_ndcg(retrieved_doc_ids: List[str], ground_truth_doc_id: str, k: int = 10) -> float:
     """Calculates Normalized Discounted Cumulative Gain (NDCG@k) for binary relevance.
 
