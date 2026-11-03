@@ -38,13 +38,16 @@ class HybridRetriever:
 
         # 3. Sort by RRF score descending
         sorted_docs = sorted(rrf_scores.items(), key=lambda x: x[1], reverse=True)
+        max_score = sorted_docs[0][1] if sorted_docs else 1.0
 
         results = []
         for rank, (d_id, score) in enumerate(sorted_docs[:top_k], start=1):
+            normalized_score = round(score / max_score, 4) if max_score > 0 else 0.0
             results.append({
                 "rank": rank,
                 "doc_id": d_id,
                 "score": round(score, 6),
+                "normalized_score": normalized_score,
                 "bm25_rank": bm25_ranks.get(d_id, None),
                 "dense_rank": dense_ranks.get(d_id, None),
                 "content": doc_contents[d_id],
