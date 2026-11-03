@@ -157,9 +157,15 @@ pip install -r requirements.txt
 
 # Run full test suite
 pytest tests/ -v
+# Or run with standard library unittest:
+python -m unittest discover tests
 
 # Launch the FastAPI server
 uvicorn src.api.main:app --port 8001 --reload
+
+# Health and readiness probes
+# GET /health - Basic health status
+# GET /health/ready - Document index readiness status
 
 # In another terminal, launch the Streamlit frontend
 streamlit run src/ui/app.py --server.port 8502
