@@ -3,7 +3,9 @@ from src.eval.metrics import (
     calculate_context_precision,
     calculate_context_recall,
     calculate_mrr,
+    calculate_reciprocal_rank,
     calculate_hit_rate,
+    calculate_average_precision,
     calculate_ndcg,
     calculate_faithfulness,
     calculate_answer_relevancy,
@@ -27,6 +29,11 @@ class TestEvalMetrics(unittest.TestCase):
         # Context Precision / MRR (rank 2 = 1/2 = 0.5)
         self.assertEqual(calculate_context_precision(retrieved, ground_truth), 0.5)
         self.assertEqual(calculate_mrr(retrieved, ground_truth), 0.5)
+        self.assertEqual(calculate_reciprocal_rank(retrieved, ground_truth), 0.5)
+
+        # Average Precision
+        ap = calculate_average_precision(["d1", "d2", "d3"], ["d1", "d3"], k=3)
+        self.assertGreater(ap, 0.5)
 
         # NDCG@k (rank 2 = 1 / log2(3) ≈ 0.6309)
         self.assertEqual(calculate_ndcg(retrieved, ground_truth, k=3), 0.6309)
