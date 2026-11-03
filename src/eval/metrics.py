@@ -13,6 +13,19 @@ def calculate_hit_rate(retrieved_doc_ids: List[str], ground_truth_doc_id: str, k
     """Calculates Hit Rate@k (1.0 if relevant document is present within top-k candidates, else 0.0)."""
     return 1.0 if ground_truth_doc_id in retrieved_doc_ids[:k] else 0.0
 
+def calculate_average_precision(retrieved_doc_ids: List[str], ground_truth_doc_ids: List[str], k: int = 10) -> float:
+    """Calculates Average Precision (AP@k) across relevant documents."""
+    if not ground_truth_doc_ids:
+        return 0.0
+    relevant_set = set(ground_truth_doc_ids)
+    hits = 0
+    sum_precisions = 0.0
+    for idx, doc_id in enumerate(retrieved_doc_ids[:k], start=1):
+        if doc_id in relevant_set:
+            hits += 1
+            sum_precisions += hits / idx
+    return round(sum_precisions / max(1, len(relevant_set)), 4)
+
 def calculate_context_precision(retrieved_doc_ids: List[str], ground_truth_doc_id: str) -> float:
     """Evaluates how high the relevant document was ranked."""
     if ground_truth_doc_id not in retrieved_doc_ids:
