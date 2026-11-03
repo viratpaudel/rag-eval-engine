@@ -137,4 +137,12 @@ class RAGBenchmarker:
             "best_strategy": "Hybrid_Reranked",
         }
 
+    def save_report_json(self, output_path: Path, top_k: int = 3) -> Dict[str, Any]:
+        """Runs evaluation and persists results as a JSON report."""
+        report = self.run_benchmark(top_k=top_k)
+        output_path = Path(output_path)
+        output_path.parent.mkdir(parents=True, exist_ok=True)
+        output_path.write_text(json.dumps(report, indent=2), encoding="utf-8")
+        return report
+
 benchmarker = RAGBenchmarker()
