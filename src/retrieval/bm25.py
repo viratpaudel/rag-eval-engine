@@ -5,9 +5,10 @@ from collections import Counter
 
 class BM25Retriever:
     """Production BM25 Okapi lexical sparse retrieval implementation."""
-    def __init__(self, k1: float = 1.5, b: float = 0.75):
+    def __init__(self, k1: float = 1.5, b: float = 0.75, stopwords: List[str] = None):
         self.k1 = k1
         self.b = b
+        self.stopwords = set(stopwords or [])
         self.doc_ids: List[str] = []
         self.doc_contents: List[str] = []
         self.doc_lens: List[int] = []
@@ -19,7 +20,11 @@ class BM25Retriever:
     def _tokenize(self, text: str) -> List[str]:
         """Sanitizes and tokenizes text into normalized lowercase tokens."""
         clean = re.sub(r"[^\w\s-]", " ", text.lower())
-        tokens = [t.strip() for t in clean.split() if len(t.strip()) > 1]
+        tokens = [
+            t.strip()
+            for t in clean.split()
+            if len(t.strip()) > 1 and t.strip() not in self.stopwords
+        ]
         return tokens
 
     def index_documents(self, documents: List[Dict[str, str]]):
