@@ -4,10 +4,12 @@ from .vector_store import DenseVectorStore
 
 class HybridRetriever:
     """Hybrid Search combining Sparse BM25 and Dense Vector Embeddings via Reciprocal Rank Fusion."""
-    def __init__(self, bm25: BM25Retriever, vector_store: DenseVectorStore, rrf_k: int = 60):
+    def __init__(self, bm25: BM25Retriever, vector_store: DenseVectorStore, rrf_k: int = 60, bm25_weight: float = 1.0, dense_weight: float = 1.0):
         self.bm25 = bm25
         self.vector_store = vector_store
         self.rrf_k = rrf_k
+        self.bm25_weight = bm25_weight
+        self.dense_weight = dense_weight
 
     def retrieve(self, query: str, top_k: int = 3, candidate_pool: int = 10) -> List[Dict[str, any]]:
         bm25_results = self.bm25.retrieve(query, top_k=candidate_pool)
@@ -24,7 +26,7 @@ class HybridRetriever:
             rank = item["rank"]
             doc_contents[d_id] = item["content"]
             bm25_ranks[d_id] = rank
-            rrf_scores[d_id] = rrf_scores.get(d_id, 0.0) + (1.0 / (self.rrf_k + rank))
+            rrf_scores[d_id] = rrf_scores.get(d_id, 0.0) + self.bm25_weight * (1.0 / (self.rrf_k + rank))
 
         # 2. Process Dense ranks
         for item in dense_results:
@@ -32,7 +34,7 @@ class HybridRetriever:
             rank = item["rank"]
             doc_contents[d_id] = item["content"]
             dense_ranks[d_id] = rank
-            rrf_scores[d_id] = rrf_scores.get(d_id, 0.0) + (1.0 / (self.rrf_k + rank))
+            rrf_scores[d_id] = rrf_scores.get(d_id, 0.0) + self.dense_weight * (1.0 / (self.rrf_k + rank))
 
         # 3. Sort by RRF score descending
         sorted_docs = sorted(rrf_scores.items(), key=lambda x: x[1], reverse=True)
