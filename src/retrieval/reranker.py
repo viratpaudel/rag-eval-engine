@@ -7,6 +7,10 @@ class CrossEncoderReranker:
         pass
 
     def rerank(self, query: str, candidates: List[Dict[str, any]], top_k: int = 3, min_score: float = 0.0) -> List[Dict[str, any]]:
+        if not candidates:
+            return []
+
+        top_k = max(1, top_k)
         query_words = set(re.findall(r"\w+", query.lower()))
         reranked = []
 
