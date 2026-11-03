@@ -145,4 +145,13 @@ class RAGBenchmarker:
         output_path.write_text(json.dumps(report, indent=2), encoding="utf-8")
         return report
 
+    def save_report_csv(self, output_path: Path, top_k: int = 3) -> Path:
+        """Runs evaluation and persists summary table as a CSV report."""
+        report = self.run_benchmark(top_k=top_k)
+        output_path = Path(output_path)
+        output_path.parent.mkdir(parents=True, exist_ok=True)
+        df = pd.DataFrame(report.get("summary_table", []))
+        df.to_csv(output_path, index=False)
+        return output_path
+
 benchmarker = RAGBenchmarker()
