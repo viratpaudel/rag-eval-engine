@@ -37,7 +37,10 @@ class DenseVectorStore:
         self.doc_ids = []
         self.contents = []
         self.embeddings = []
+        self.add_documents_batch(documents)
 
+    def add_documents_batch(self, documents: List[Dict[str, str]]):
+        """Appends a batch of documents into the index."""
         for doc in documents:
             self.doc_ids.append(doc["id"])
             self.contents.append(doc["content"])
