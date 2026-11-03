@@ -48,6 +48,16 @@ class BM25Retriever:
         self.total_docs = len(self.doc_ids)
         self.avg_dl = sum(self.doc_lens) / max(1, self.total_docs)
 
+    def get_stats(self) -> Dict[str, any]:
+        """Returns summary statistics for the indexed corpus."""
+        return {
+            "total_documents": self.total_docs,
+            "vocabulary_size": len(self.doc_freqs),
+            "average_document_length": round(self.avg_dl, 2),
+            "k1": self.k1,
+            "b": self.b,
+        }
+
     def retrieve(self, query: str, top_k: int = 3) -> List[Dict[str, any]]:
         """Scores documents for a query using BM25 Okapi formula."""
         if not query or not query.strip():
