@@ -51,6 +51,13 @@ class DenseVectorStore:
             emb = _dense_hash_embedding(doc["content"], self.dim)
             self.embeddings.append(emb)
 
+    def get_stats(self) -> Dict[str, any]:
+        """Returns statistics for the vector store index."""
+        return {
+            "total_vectors": len(self.embeddings),
+            "dimension": self.dim,
+        }
+
     def retrieve(self, query: str, top_k: int = 3) -> List[Dict[str, any]]:
         query_emb = _dense_hash_embedding(query, self.dim)
         scores: List[Tuple[int, float]] = []
