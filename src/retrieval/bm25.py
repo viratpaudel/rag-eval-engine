@@ -50,7 +50,13 @@ class BM25Retriever:
 
     def retrieve(self, query: str, top_k: int = 3) -> List[Dict[str, any]]:
         """Scores documents for a query using BM25 Okapi formula."""
+        if not query or not query.strip():
+            return []
+
         query_tokens = self._tokenize(query)
+        if not query_tokens:
+            return []
+
         scores: List[Tuple[int, float]] = []
 
         for idx in range(self.total_docs):
