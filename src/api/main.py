@@ -21,7 +21,7 @@ app.add_middleware(
 )
 
 class RetrievalRequest(BaseModel):
-    query: str = Field(..., example="How does PagedAttention eliminate memory fragmentation?")
+    query: str = Field(..., examples=["How does PagedAttention eliminate memory fragmentation?"])
     strategy: str = Field("hybrid_rerank", description="One of: 'dense', 'bm25', 'hybrid', 'hybrid_rerank'")
     top_k: int = Field(3, ge=1, le=10)
 
