@@ -19,6 +19,10 @@ class TestRetrieval(unittest.TestCase):
         self.assertEqual(len(results), 1)
         self.assertEqual(results[0]["doc_id"], "doc_paged.md")
 
+        # Test empty query and high threshold filtering
+        self.assertEqual(bm25.retrieve(""), [])
+        self.assertEqual(bm25.retrieve("irrelevant query", min_score=999.0), [])
+
     def test_dense_vector_retrieval(self):
         vstore = DenseVectorStore()
         vstore.index_documents(self.sample_docs)

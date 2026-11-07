@@ -63,9 +63,9 @@ class BM25Retriever:
             "b": self.b,
         }
 
-    def retrieve(self, query: str, top_k: int = 3) -> List[Dict[str, any]]:
+    def retrieve(self, query: str, top_k: int = 3, min_score: float = 0.0) -> List[Dict[str, any]]:
         """Scores documents for a query using BM25 Okapi formula."""
-        if not query or not query.strip():
+        if not query or not query.strip() or self.total_docs == 0:
             return []
 
         query_tokens = self._tokenize(query)
@@ -96,6 +96,8 @@ class BM25Retriever:
 
         # Sort descending by score
         scores.sort(key=lambda x: x[1], reverse=True)
+        if min_score > 0.0:
+            scores = [s for s in scores if s[1] >= min_score]
 
         results = []
         for rank, (idx, sc) in enumerate(scores[:top_k], start=1):
