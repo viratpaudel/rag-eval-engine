@@ -203,5 +203,16 @@ streamlit run src/ui/app.py --server.port 8502
 
 ---
 
+## 🤝 Contributing
+
+Contributions, issues, and feature requests are welcome!
+1. Fork the Project
+2. Create your Feature Branch (`git checkout -b feat/eval-improvement`)
+3. Commit your Changes (`git commit -m 'feat: add custom metric'`)
+4. Push to the Branch (`git push origin feat/eval-improvement`)
+5. Open a Pull Request
+
+---
+
 ## 📄 License
 Released under the [MIT License](LICENSE).
