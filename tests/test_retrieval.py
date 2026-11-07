@@ -41,6 +41,10 @@ class TestRetrieval(unittest.TestCase):
         self.assertEqual(len(results), 1)
         self.assertEqual(results[0]["doc_id"], "doc_rrf.md")
 
+        # Test empty query and thresholding
+        self.assertEqual(hybrid.retrieve(""), [])
+        self.assertEqual(hybrid.retrieve("Reciprocal Rank Fusion", min_score=1.5), [])
+
     def test_cross_encoder_reranker(self):
         reranker = CrossEncoderReranker()
         candidates = [

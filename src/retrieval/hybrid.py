@@ -11,7 +11,10 @@ class HybridRetriever:
         self.bm25_weight = bm25_weight
         self.dense_weight = dense_weight
 
-    def retrieve(self, query: str, top_k: int = 3, candidate_pool: int = 10) -> List[Dict[str, any]]:
+    def retrieve(self, query: str, top_k: int = 3, candidate_pool: int = 10, min_score: float = 0.0) -> List[Dict[str, any]]:
+        if not query or not query.strip():
+            return []
+
         bm25_results = self.bm25.retrieve(query, top_k=candidate_pool)
         dense_results = self.vector_store.retrieve(query, top_k=candidate_pool)
 
@@ -43,6 +46,8 @@ class HybridRetriever:
         results = []
         for rank, (d_id, score) in enumerate(sorted_docs[:top_k], start=1):
             normalized_score = round(score / max_score, 4) if max_score > 0 else 0.0
+            if min_score > 0.0 and normalized_score < min_score:
+                continue
             results.append({
                 "rank": rank,
                 "doc_id": d_id,
