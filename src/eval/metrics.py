@@ -1,6 +1,6 @@
 import math
 import re
-from typing import List, Set
+from typing import List, Set, Tuple
 
 def _normalize_tokens(text: str) -> Set[str]:
     return set(re.findall(r"\w+", text.lower()))
@@ -77,3 +77,16 @@ def calculate_answer_relevancy(generated_answer: str, expected_answer: str) -> f
     overlap = gen_tokens.intersection(exp_tokens)
     relevancy = len(overlap) / len(exp_tokens)
     return round(min(1.0, relevancy), 4)
+
+def calculate_map(query_results: List[Tuple[List[str], List[str]]], k: int = 10) -> float:
+    """Calculates Mean Average Precision (MAP@k) across multiple evaluation queries.
+
+    Each item in query_results is a tuple: (retrieved_doc_ids, ground_truth_doc_ids).
+    """
+    if not query_results:
+        return 0.0
+    ap_scores = [
+        calculate_average_precision(retrieved, gt, k=k)
+        for retrieved, gt in query_results
+    ]
+    return round(sum(ap_scores) / len(ap_scores), 4)
